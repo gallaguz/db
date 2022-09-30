@@ -1,2 +1,3 @@
 /microservices.mongo/db.files/
 /.idea/
+*.env
