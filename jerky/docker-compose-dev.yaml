@@ -1,0 +1,30 @@
+version: '3.1'
+
+services:
+  jerky-mongo-express:
+    image: mongo-express:1.0.0-alpha.4
+    container_name: jerky-mongo-express
+    restart: always
+    ports:
+      - '8081:8081'
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: admin
+      ME_CONFIG_MONGODB_SERVER: jerky-mongo
+      ME_CONFIG_MONGODB_PORT: 27017
+
+  jerky-phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: jerky-pma
+    links:
+      - mysql
+    ports:
+      - "8082:80"
+    environment:
+      PMA_HOST: jerky-mysql
+      PMA_USER: 'admin'
+      PMA_PASSWORD: 'admin'
+      PHP_UPLOAD_MAX_FILESIZE: '100MB'
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+

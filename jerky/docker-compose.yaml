@@ -1,0 +1,73 @@
+version: '3.1'
+
+services:
+  jerky-rmq:
+    image: rabbitmq:3-management
+    container_name: jerky-rmq
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+    ports:
+      - '15672:15672'
+      - '5672:5672'
+
+  jerky-user-postgres:
+    image: postgres:13.3-alpine
+    container_name: jerky-user-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    logging:
+      options:
+        max-size: ${POSTGRES_MAX_LOG_SIZE}
+        max-file: ${POSTGRES_MAX_LOG_FILES}
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./db.files/postgres.user:/var/lib/postgresql/data
+
+  jerky-auth-postgres:
+    image: postgres:13.3-alpine
+    container_name: jerky-auth-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    logging:
+      options:
+        max-size: ${POSTGRES_MAX_LOG_SIZE}
+        max-file: ${POSTGRES_MAX_LOG_FILES}
+    ports:
+      - '5433:5432'
+    volumes:
+      - ./db.files/postgres.auth:/var/lib/postgresql/data
+
+  jerky-mongo:
+    image: mongo:4.4.4
+    container_name: jerky-mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    ports:
+      - '27017:27017'
+    volumes:
+      - ./db.files/mongo:/data/db
+
+  jerky-mysql:
+    image: mysql:5.7
+    restart: always
+    container_name: jerky-mysql
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - ./db.files/mysql:/var/lib/mysql
